@@ -1,0 +1,47 @@
+{
+    "editor.inlineSuggest.enabled": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        }
+    },
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "indentRainbow.indicatorStyle": "light",
+    "indentRainbow.lightIndicatorStyleLineWidth": 1,
+    "indentRainbow.colors": [
+        "rgba(198, 98, 98, 0.84)",
+        "rgba(198, 160, 98, 0.84)",
+        "rgba(128, 198, 98, 0.84)",
+        "rgba(98, 180, 198, 0.84)",
+        "rgba(114, 98, 198, 0.84)",
+        "rgba(212, 208, 236, 0.84)"
+    ],
+    "cSpell.words": [
+        "fastapi",
+        "sqlalchemy",
+        "sessionmaker",
+        "pybo",
+        "autoflush",
+        "backref",
+        "pydantic",
+        "passlib",
+        "starlette",
+        "dotenv",
+        "metainfo",
+        "alembic",
+        "camelcase",
+        "onupdate"
+    ],
+    "flake8.args": [
+        "--max-line-length=101"
+    ],
+    "black-formatter.args": [
+        "--line-length=102"
+    ]
+}
