@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from typing_extensions import Annotated
 
 from app import model
+from app.repository.user import UserRepository
 from app.service.user import UserService
 from app.utils import ResponseAnnotationHandler, ResponseHandler, get_db, oauth2_scheme
 
@@ -66,3 +67,23 @@ def sign_in(
 )
 def sign_out(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
     UserService.sign_out(token=token, db=db)
+
+
+@router.get(
+    path="/profile",
+    tags=["user"],
+    summary="내 정보",
+    response_model=model.user.UserProfile,
+    responses={
+        401: ResponseAnnotationHandler.response_401_error(),
+        400: ResponseAnnotationHandler.response_error(
+            detail="유효하지 않은 토큰입니다.",
+            description="토큰 유효성 에러",
+        ),
+    },
+)
+def user_profile(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+    UserRepository.check_access_token_validation(token, db)
+    user = UserService.get_user_profile(token=token, db=db)
+
+    return model.user.UserProfile(**user)

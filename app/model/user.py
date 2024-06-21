@@ -26,8 +26,16 @@ class User(BaseModel):
     password: str
     username: str
     gender: str
-    age: str
+    age: int
     role: str
     created_at: NaiveDatetime
     updated_at: NaiveDatetime
     last_login: NaiveDatetime
+
+
+class UserProfile(BaseModel):
+    email: str
+    username: str
+    gender: str
+    age: str
+    role: str

@@ -58,3 +58,12 @@ class UserRepository:
             )
         db_token.token = None
         db.commit()
+
+    @staticmethod
+    def check_access_token_validation(access_token: str, db: Session):
+        db_token = db.query(UserToken).filter(UserToken.token == access_token).first()
+        if not db_token:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="유효하지 않은 토큰입니다.",
+            )

@@ -1,6 +1,6 @@
 # 2. service: 비지니스 로직을 처리, 유효성 검사, 직렬화 및 비직렬화, db 연결을 제외한 모든 처리 / 데이터베이스와의 직접적인 상호작용은 없음
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from app import model
+from app.enums import UserGender, UserRole
 from app.repository.user import UserRepository
 from app.utils import pwd_context
 from config import ACCESS_TOKEN_EXPIRE_MINUTES, HASH_ALGORITHM, SECRET_KEY
@@ -48,5 +49,16 @@ class UserService:
 
     @staticmethod
     def sign_out(token: str, db: Session):
-        # db_user = UserRepository.get_user_by_token(token, db)
+        # db_user = UserRepository.get_user_by_token(token, db) # 로그를 저장안하기 떄문에 아직 필요 x
         UserRepository.remove_access_token(token, db)
+
+    @staticmethod
+    def get_user_profile(token: str, db: Session):
+        db_user = UserRepository.get_user_by_token(token, db)
+        return dict(
+            email=db_user.email,
+            username=db_user.username,
+            gender=UserGender[db_user.gender.upper()].display,
+            age=f"{db_user.age}세",
+            role=UserRole[db_user.role.upper()].display,
+        )
