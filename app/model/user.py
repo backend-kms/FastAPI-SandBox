@@ -12,4 +12,22 @@ class UserCreate(BaseModel):
     password: str
     username: str
     gender: Literal["male", "female"]
+    age: int
+
+
+class UserToken(BaseModel):
+    access_token: str
+    username: str
+
+
+class User(BaseModel):
+    id: UUID4
+    email: str
+    password: str
+    username: str
+    gender: str
     age: str
+    role: str
+    created_at: NaiveDatetime
+    updated_at: NaiveDatetime
+    last_login: NaiveDatetime

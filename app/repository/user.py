@@ -1,4 +1,5 @@
 # 3. repository: 데이터베이스와의 상호작용을 처리, CRUD를 처리하는 곳
+import datetime
 
 from sqlalchemy.orm import Session
 
@@ -25,5 +26,18 @@ class UserRepository:
         db.refresh(db_user)
         return db_user
 
+    @staticmethod
     def check_existing_email(user: model.user.UserCreate, db: Session):
         return db.query(User).filter((User.email == user.email)).first()
+
+    @staticmethod
+    def get_user_by_email(email: str, db: Session):
+        return db.query(User).filter((User.email == email)).first()
+
+    @staticmethod
+    def update_last_login(user: model.user.User, access_token: str, db: Session):
+        db_user = db.query(User).filter(User.email == user.email).first()
+
+        db_user.last_login = datetime.datetime.now()
+        db_user.user_token.token = access_token
+        db.commit()

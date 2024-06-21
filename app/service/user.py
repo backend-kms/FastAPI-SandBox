@@ -1,12 +1,17 @@
 # 2. service: 비지니스 로직을 처리, 유효성 검사, 직렬화 및 비직렬화, db 연결을 제외한 모든 처리 / 데이터베이스와의 직접적인 상호작용은 없음
 
+from datetime import datetime, timedelta, timezone
+
 from fastapi import HTTPException
+from fastapi.security import OAuth2PasswordRequestForm
+from jose import jwt
 from sqlalchemy.orm import Session
 from starlette import status
 
 from app import model
 from app.repository.user import UserRepository
 from app.utils import pwd_context
+from config import ACCESS_TOKEN_EXPIRE_MINUTES, HASH_ALGORITHM, SECRET_KEY
 
 
 class UserService:
@@ -21,3 +26,22 @@ class UserService:
         user.password = pwd_context.hash(user.password)
         db_user = UserRepository.create_user(user, db)
         return db_user
+
+    @staticmethod
+    def sign_in(user: OAuth2PasswordRequestForm, db: Session):
+        db_user = UserRepository.get_user_by_email(user.username, db)
+        if not db_user or not pwd_context.verify(user.password, db_user.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="아이디와 비밀번호를 확인하세요.",
+            )
+        seed = {
+            "sub": db_user.email,
+            "exp": datetime.utcnow() + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES)),
+        }
+        access_token = jwt.encode(seed, SECRET_KEY, algorithm=HASH_ALGORITHM)
+        UserRepository.update_last_login(db_user, access_token, db)
+
+        response = dict(access_token=access_token, username=db_user.username)
+
+        return response

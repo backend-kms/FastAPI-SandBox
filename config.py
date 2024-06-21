@@ -6,3 +6,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 DATABASE_URL = os.environ["DATABASE_URL"]
+ACCESS_TOKEN_EXPIRE_MINUTES = os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"]
+HASH_ALGORITHM = os.environ["HASH_ALGORITHM"]
+SECRET_KEY = os.environ["SECRET_KEY"]
