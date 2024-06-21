@@ -7,7 +7,7 @@ from typing_extensions import Annotated
 
 from app import model
 from app.service.user import UserService
-from app.utils import ResponseAnnotationHandler, ResponseHandler, get_db
+from app.utils import ResponseAnnotationHandler, ResponseHandler, get_db, oauth2_scheme
 
 router = APIRouter(prefix="/user")
 
@@ -49,3 +49,20 @@ def sign_in(
 ):
     login_info = UserService.sign_in(user=form_data, db=db)
     return model.user.UserToken(**login_info)
+
+
+@router.delete(
+    path="/sign-out",
+    tags=["user"],
+    summary="로그아웃",
+    status_code=204,
+    responses={
+        204: ResponseAnnotationHandler.response_204_no_content(),
+        401: ResponseAnnotationHandler.response_401_error(),
+        400: ResponseAnnotationHandler.response_error(
+            detail="유효하지 않은 토큰입니다.", description="토큰 유효성 에러"
+        ),
+    },
+)
+def sign_out(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)):
+    UserService.sign_out(token=token, db=db)

@@ -45,3 +45,8 @@ class UserService:
         response = dict(access_token=access_token, username=db_user.username)
 
         return response
+
+    @staticmethod
+    def sign_out(token: str, db: Session):
+        # db_user = UserRepository.get_user_by_token(token, db)
+        UserRepository.remove_access_token(token, db)

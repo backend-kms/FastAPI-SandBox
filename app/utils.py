@@ -1,7 +1,9 @@
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 
 from app.database import SessionLocal
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/user/sign-in")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
