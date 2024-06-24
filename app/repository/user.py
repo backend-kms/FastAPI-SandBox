@@ -2,6 +2,7 @@
 import datetime
 
 from fastapi import HTTPException
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -67,3 +68,7 @@ class UserRepository:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="유효하지 않은 토큰입니다.",
             )
+
+    @staticmethod
+    def get_users(db: Session):
+        return db.query(User).order_by(desc(User.created_at))

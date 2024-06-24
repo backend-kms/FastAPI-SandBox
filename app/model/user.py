@@ -39,3 +39,19 @@ class UserProfile(BaseModel):
     gender: str
     age: str
     role: str
+
+
+class UserListItem(BaseModel):
+    email: str
+    username: str
+    gender: str
+    age: int
+    role: str
+    last_login: datetime.datetime
+    created_at: datetime.datetime
+    updated_at: Optional[datetime.datetime]
+    deleted_at: Optional[datetime.datetime]
+
+
+class UserList(BaseModel):
+    items: List[UserListItem]

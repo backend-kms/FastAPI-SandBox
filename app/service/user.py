@@ -62,3 +62,20 @@ class UserService:
             age=f"{db_user.age}세",
             role=UserRole[db_user.role.upper()].display,
         )
+
+    @staticmethod
+    def get_users(db: Session):
+        return [
+            model.user.UserListItem(
+                email=db_user.email,
+                username=db_user.username,
+                gender=UserGender[db_user.gender.upper()].display,
+                age=db_user.age,
+                role=UserRole[db_user.role.upper()].display,
+                last_login=db_user.last_login,
+                created_at=db_user.created_at,
+                updated_at=db_user.updated_at,
+                deleted_at=db_user.deleted_at,
+            )
+            for db_user in UserRepository.get_users(db)
+        ]
