@@ -5,7 +5,7 @@ from typing_extensions import Annotated
 
 from app import model
 from app.repository.user import UserRepository
-from app.service.user import UserService
+from app.service.admin import AdminUserService
 from app.utils import ResponseAnnotationHandler, get_db, oauth2_scheme
 
 router = APIRouter(prefix="/admin")
@@ -28,5 +28,5 @@ def users_profile(
     token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)
 ) -> Page[model.user.UserList]:
     UserRepository.check_access_token_validation(token, db)
-    valid_users = UserService.get_users(db=db)
+    valid_users = AdminUserService.get_users(db=db)
     return paginate(valid_users)

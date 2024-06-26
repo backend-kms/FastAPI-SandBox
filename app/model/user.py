@@ -55,3 +55,9 @@ class UserListItem(BaseModel):
 
 class UserList(BaseModel):
     items: List[UserListItem]
+
+
+class ChangePasswordForm(BaseModel):
+    old_password: str
+    new_pwd: str
+    new_pwd_confirmation: str

@@ -64,18 +64,25 @@ class UserService:
         )
 
     @staticmethod
-    def get_users(db: Session):
-        return [
-            model.user.UserListItem(
-                email=db_user.email,
-                username=db_user.username,
-                gender=UserGender[db_user.gender.upper()].display,
-                age=db_user.age,
-                role=UserRole[db_user.role.upper()].display,
-                last_login=db_user.last_login,
-                created_at=db_user.created_at,
-                updated_at=db_user.updated_at,
-                deleted_at=db_user.deleted_at,
+    def change_password(token: str, password_form: model.user.ChangePasswordForm, db: Session):
+        db_user = UserRepository.get_user_by_token(token, db)
+
+        if password_form.new_pwd != password_form.new_pwd_confirmation:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="요청값이 잘못되었습니다."
             )
-            for db_user in UserRepository.get_users(db)
-        ]
+
+        if not pwd_context.verify(password_form.old_password, db_user.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="비밀번호가 잘못되었습니다.",
+            )
+
+        if pwd_context.verify(password_form.new_pwd, db_user.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="비밀번호가 이전과 동일합니다.",
+            )
+
+        db_user.password = pwd_context.hash(password_form.new_pwd)
+        db.commit()

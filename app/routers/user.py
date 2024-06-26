@@ -87,3 +87,26 @@ def user_profile(token: Annotated[str, Depends(oauth2_scheme)], db: Session = De
     user = UserService.get_user_profile(token=token, db=db)
 
     return model.user.UserProfile(**user)
+
+
+@router.post(
+    path="/profile/change-password",
+    tags=["user"],
+    summary="비밀번호 변경",
+    responses={
+        200: ResponseAnnotationHandler.response_200_ok(message="비밀번호 변경이 완료되었습니다."),
+        400: ResponseAnnotationHandler.response_error(
+            detail="비밀번호를 확인하세요.",
+            description="비밀번호 변경 에러",
+        ),
+    },
+)
+def change_password(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    password_form: model.user.ChangePasswordForm,
+    db: Session = Depends(get_db),
+):
+    UserRepository.check_access_token_validation(token, db)
+    UserService.change_password(token=token, password_form=password_form, db=db)
+
+    return ResponseHandler.response_200_ok(message="비밀번호 변경이 완료되었습니다.")
